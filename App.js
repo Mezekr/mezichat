@@ -10,7 +10,11 @@ const App = () => {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator initialRouteName="Start">
-				<Stack.Screen name="Start" component={Start} />
+				<Stack.Screen
+					name="Start"
+					component={Start}
+					options={{ headerShown: false }}
+				/>
 				<Stack.Screen name="Chat" component={Chat} />
 			</Stack.Navigator>
 		</NavigationContainer>
