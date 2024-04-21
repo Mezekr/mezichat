@@ -81,6 +81,11 @@ const Start = ({ navigation }) => {
 				</View>
 				<TouchableOpacity
 					style={styles.customeBtn}
+					accessible={true}
+					accessibilityLabel="Start chatting"
+					accessibilityHint="Navigates to the chat screen to start \
+							chatting and send a picture or your geolocation."
+					accessibilityRole="button"
 					onPress={handlePress}
 					activeOpacity={0.7}
 				>
