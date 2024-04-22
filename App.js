@@ -3,9 +3,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { StyleSheet, Text, View } from 'react-native';
+import { LogBox, StyleSheet, Text, View } from 'react-native';
 import Chat from './components/Chat';
 import Start from './components/Start';
+
+LogBox.ignoreAllLogs();
+LogBox.ignoreLogs(['AsyncStorage has been extracted from']);
 
 const Stack = createNativeStackNavigator();
 
