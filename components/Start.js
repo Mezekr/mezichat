@@ -1,3 +1,4 @@
+import { getAuth, signInAnonymously } from 'firebase/auth';
 import React, { useState } from 'react';
 import {
 	Image,
@@ -10,17 +11,28 @@ import {
 } from 'react-native';
 import BackgroundImage from '../assets/BackgroundImage.png';
 import userIcon from '../assets/userIcon.png';
+
 const Start = ({ navigation }) => {
+	const auth = getAuth();
 	// State to hold the name input value
 	const [name, setName] = useState('');
 	// State to hold the chosen Chat Screen background color
 	const [chatBackgroundColor, setChatBackgroundColor] = useState('');
 
-	const handlePress = () => {
-		navigation.navigate('Chat', {
-			name: name,
-			chatBackgroundColor: chatBackgroundColor,
-		});
+	// Handles the anonymous user sign in
+	const signInUser = () => {
+		signInAnonymously(auth)
+			.then((result) => {
+				navigation.navigate('Chat', {
+					userID: result.user.uid,
+					name: name,
+					chatBackgroundColor: chatBackgroundColor,
+				});
+				Alert.alert('Signed in Successfully!');
+			})
+			.catch((error) => {
+				Alert.alert('Unable to sign in, try later again.');
+			});
 	};
 
 	return (
@@ -86,7 +98,7 @@ const Start = ({ navigation }) => {
 					accessibilityHint="Navigates to the chat screen to start \
 							chatting and send a picture or your geolocation."
 					accessibilityRole="button"
-					onPress={handlePress}
+					onPress={signInUser}
 					activeOpacity={0.7}
 				>
 					<Text style={styles.text}>Start chatting</Text>
