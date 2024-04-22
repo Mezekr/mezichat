@@ -1,6 +1,7 @@
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import React, { useState } from 'react';
 import {
+	Alert,
 	Image,
 	ImageBackground,
 	StyleSheet,
@@ -18,6 +19,9 @@ const Start = ({ navigation }) => {
 	const [name, setName] = useState('');
 	// State to hold the chosen Chat Screen background color
 	const [chatBackgroundColor, setChatBackgroundColor] = useState('');
+
+	// Chat Screen Background Color Options
+	const colors = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
 
 	// Handles the anonymous user sign in
 	const signInUser = () => {
@@ -56,39 +60,25 @@ const Start = ({ navigation }) => {
 						onChangeText={setName}
 					/>
 				</View>
+
+				{/* Allows the user to choose the chat background color */}
 				<View style={styles.colorsBoxContainer}>
 					<Text style={styles.colorsBoxContainerLabel}>
 						Choose background color
 					</Text>
 					<View style={styles.colorButtonsContainer}>
-						<TouchableOpacity
-							style={[
-								styles.colorButton,
-								{ backgroundColor: '#090C08' },
-							]}
-							onPress={() => setChatBackgroundColor('#090C08')}
-						></TouchableOpacity>
-						<TouchableOpacity
-							style={[
-								styles.colorButton,
-								{ backgroundColor: '#474056' },
-							]}
-							onPress={() => setChatBackgroundColor('#474056')}
-						></TouchableOpacity>
-						<TouchableOpacity
-							style={[
-								styles.colorButton,
-								{ backgroundColor: '#8A95A5' },
-							]}
-							onPress={() => setChatBackgroundColor('#8A95A5')}
-						></TouchableOpacity>
-						<TouchableOpacity
-							style={[
-								styles.colorButton,
-								{ backgroundColor: '#B9C6AE' },
-							]}
-							onPress={() => setChatBackgroundColor('#B9C6AE')}
-						></TouchableOpacity>
+						{colors.map((color, index) => (
+							<TouchableOpacity
+								key={index}
+								style={[
+									styles.colorButton,
+									{ backgroundColor: color },
+									chatBackgroundColor === color &&
+										styles.selected,
+								]}
+								onPress={() => setChatBackgroundColor(color)}
+							/>
+						))}
 					</View>
 				</View>
 				<TouchableOpacity
@@ -157,6 +147,10 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 30,
 		borderColor: '#3887ff',
+	},
+	selected: {
+		borderColor: 'orange',
+		borderWidth: 3,
 	},
 	customeBtn: {
 		width: '88%',
