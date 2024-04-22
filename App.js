@@ -34,10 +34,7 @@ const App = () => {
 					component={Start}
 					options={{ headerShown: false }}
 				/>
-				<Stack.Screen
-					name="Chat"
-					// component={Chat}
-				>
+				<Stack.Screen name="Chat">
 					{(props) => <Chat db={db} {...props} />}
 				</Stack.Screen>
 			</Stack.Navigator>
