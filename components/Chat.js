@@ -1,52 +1,53 @@
-import React, { useEffect, useState } from 'react';
 import {
-	Image,
-	KeyboardAvoidingView,
-	Platform,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+	addDoc,
+	collection,
+	onSnapshot,
+	orderBy,
+	query,
+} from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 
-const Chat = ({ route, navigation }) => {
+const Chat = ({ route, navigation, db }) => {
 	// Name to display on the States bar and
 	// Chat Background Color vuleus from the start sceen
-	const { name, chatBackgroundColor } = route.params;
+	const { userID, name, chatBackgroundColor } = route.params;
 
 	// State used to hold the message Send
 	const [messages, setMessages] = useState([]);
 
-	// Displays massages at the start of the application
 	useEffect(() => {
 		navigation.setOptions({ title: name });
-		setMessages([
-			{
-				_id: 1,
-				text: 'Hello developer',
-				createdAt: new Date(),
-				user: {
-					_id: 2,
-					name: 'React Native',
-					avatar: 'https://placeimg.com/140/140/any',
-				},
-			},
-			{
-				_id: 2,
-				text: 'This is a system message',
-				createdAt: new Date(),
-				system: true,
-			},
-		]);
+
+		// Get user with specific ID
+		const queryUser = query(
+			collection(db, 'chatmessages'),
+			orderBy('createdAt', 'desc')
+		);
+
+		// Real-Time Firestore Data Synchronization/reading
+		const unsubChatMessages = onSnapshot(queryUser, (docsSnapshot) => {
+			let newMessages = [];
+			docsSnapshot.forEach((doc) => {
+				newMessages.push({
+					id: doc.id,
+					...doc.data(),
+					createdAt: new Date(doc.data().createdAt.toMillis()),
+				});
+			});
+			setMessages(newMessages);
+		});
+
+		// Clean up code to avoid memory leaks
+		return () => {
+			if (unsubChatMessages) unsubChatMessages();
+		};
 	}, []);
 
+	//Writing Data in Firestore Database
 	const onSend = (newMessages) => {
-		setMessages((previousMessages) =>
-			GiftedChat.append(previousMessages, newMessages)
-		);
+		addDoc(collection(db, 'chatmessages'), newMessages[0]);
 	};
 
 	// Change the bubble background colour based on the chat background colour
@@ -79,8 +80,12 @@ const Chat = ({ route, navigation }) => {
 				renderBubble={renderBubble}
 				onSend={(messages) => onSend(messages)}
 				user={{
-					_id: 1,
+					_id: userID,
+					name: name,
 				}}
+				alwaysShowSend
+				showUserAvatar
+				scrollToBottom
 			/>
 			{Platform.OS === 'android' ? (
 				<KeyboardAvoidingView behavior="height" />
