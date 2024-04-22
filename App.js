@@ -7,6 +7,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import Chat from './components/Chat';
 import Start from './components/Start';
 
+const Stack = createNativeStackNavigator();
+
 const App = () => {
 	// Your web app's Firebase configuration
 	const firebaseConfig = {
@@ -24,7 +26,6 @@ const App = () => {
 	// Initialize Cloud Firestore and get a reference to the service
 	const db = getFirestore(app);
 
-	const Stack = createNativeStackNavigator();
 	return (
 		<NavigationContainer>
 			<Stack.Navigator initialRouteName="Start">
@@ -33,7 +34,12 @@ const App = () => {
 					component={Start}
 					options={{ headerShown: false }}
 				/>
-				<Stack.Screen name="Chat" component={Chat} />
+				<Stack.Screen
+					name="Chat"
+					// component={Chat}
+				>
+					{(props) => <Chat db={db} {...props} />}
+				</Stack.Screen>
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
