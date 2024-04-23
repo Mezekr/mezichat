@@ -13,6 +13,15 @@ import { Alert, LogBox, StyleSheet, Text, View } from 'react-native';
 import Chat from './components/Chat';
 import Start from './components/Start';
 
+import {
+	API_KEY,
+	APP_ID,
+	AUTH_DOMAIN,
+	MESSAGING_SENDER_ID,
+	PROJECT_ID,
+	STORAGE_BUCKET,
+} from '@env';
+
 LogBox.ignoreAllLogs();
 LogBox.ignoreLogs(['AsyncStorage has been extracted from']);
 
@@ -35,12 +44,12 @@ const App = () => {
 
 	// Your web app's Firebase configuration
 	const firebaseConfig = {
-		apiKey: 'AIzaSyAvoMwnLUNqchhzI02kLDtH_YE0nuUaucs',
-		authDomain: 'mezichatapp.firebaseapp.com',
-		projectId: 'mezichatapp',
-		storageBucket: 'mezichatapp.appspot.com',
-		messagingSenderId: '703795610972',
-		appId: '1:703795610972:web:da0c4c89576062459b2d99',
+		apiKey: API_KEY,
+		authDomain: AUTH_DOMAIN,
+		projectId: PROJECT_ID,
+		storageBucket: STORAGE_BUCKET,
+		messagingSenderId: MESSAGING_SENDER_ID,
+		appId: APP_ID,
 	};
 
 	// Initialize Firebase
