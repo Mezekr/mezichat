@@ -1,9 +1,15 @@
+import { useNetInfo } from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { LogBox, StyleSheet, Text, View } from 'react-native';
+import {
+	disableNetwork,
+	enableNetwork,
+	getFirestore,
+} from 'firebase/firestore';
+import { useEffect } from 'react';
+import { Alert, LogBox, StyleSheet, Text, View } from 'react-native';
 import Chat from './components/Chat';
 import Start from './components/Start';
 
@@ -13,6 +19,20 @@ LogBox.ignoreLogs(['AsyncStorage has been extracted from']);
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+	//State that represents the network connectivity status
+	const connectionStatus = useNetInfo();
+
+	// Displays an alert popup if connection is lost and
+	// Disables attempts to connect to Firestore DB
+	useEffect(() => {
+		if (connectionStatus.isConnected === false) {
+			Alert.alert('Connection Lost!');
+			disableNetwork(db);
+		} else if (connectionStatus.isConnected === true) {
+			enableNetwork(db);
+		}
+	}, [connectionStatus.isConnected]);
+
 	// Your web app's Firebase configuration
 	const firebaseConfig = {
 		apiKey: 'AIzaSyAvoMwnLUNqchhzI02kLDtH_YE0nuUaucs',
