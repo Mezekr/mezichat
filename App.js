@@ -1,4 +1,4 @@
-import { useNetInfo } from '@react-native-community/netinfo';
+import NetInfo from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
@@ -29,7 +29,7 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
 	//State that represents the network connectivity status
-	const connectionStatus = useNetInfo();
+	const connectionStatus = NetInfo.useNetInfo();
 
 	// Displays an alert popup if connection is lost and
 	// Disables attempts to connect to Firestore DB
@@ -67,7 +67,14 @@ const App = () => {
 					options={{ headerShown: false }}
 				/>
 				<Stack.Screen name="Chat">
-					{(props) => <Chat db={db} {...props} />}
+					{(props) => (
+						<Chat
+							db={db}
+							// Pass connection status to chat component
+							isConnected={connectionStatus.isConnected}
+							{...props}
+						/>
+					)}
 				</Stack.Screen>
 			</Stack.Navigator>
 		</NavigationContainer>
