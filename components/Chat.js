@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
 	addDoc,
 	collection,
@@ -7,9 +8,9 @@ import {
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { Bubble, GiftedChat } from 'react-native-gifted-chat';
+import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, isConnected }) => {
 	// Name to display on the States bar and
 	// Chat Background Color vuleus from the start sceen
 	const { userID, name, chatBackgroundColor } = route.params;
@@ -17,33 +18,61 @@ const Chat = ({ route, navigation, db }) => {
 	// State used to hold the message Send
 	const [messages, setMessages] = useState([]);
 
+	let unsubChatMessages;
+
 	useEffect(() => {
 		navigation.setOptions({ title: name });
 
-		// Get user with specific ID
-		const queryUser = query(
-			collection(db, 'chatmessages'),
-			orderBy('createdAt', 'desc')
-		);
+		// If online, loads from Firebase, otherwise loads from local storage
+		if (isConnected === true) {
+			// unregister current onSnapshot() listener to avoid registering
+			// multiple listeners when useEffect code is re-executed.
+			if (unsubChatMessages) unsubChatMessages();
+			unsubChatMessages = null;
 
-		// Real-Time Firestore Data Synchronization/reading
-		const unsubChatMessages = onSnapshot(queryUser, (docsSnapshot) => {
-			let newMessages = [];
-			docsSnapshot.forEach((doc) => {
-				newMessages.push({
-					id: doc.id,
-					...doc.data(),
-					createdAt: new Date(doc.data().createdAt.toMillis()),
+			// Get user with specific ID
+			const queryUser = query(
+				collection(db, 'chatmessages'),
+				orderBy('createdAt', 'desc')
+			);
+
+			// Real-Time Firestore Data Synchronization/reading
+			unsubChatMessages = onSnapshot(queryUser, (docsSnapshot) => {
+				let newMessages = [];
+				docsSnapshot.forEach((doc) => {
+					newMessages.push({
+						id: doc.id,
+						...doc.data(),
+						createdAt: new Date(doc.data().createdAt.toMillis()),
+					});
 				});
+				cacheChatMessages(newMessages);
+				setMessages(newMessages);
 			});
-			setMessages(newMessages);
-		});
+		} else loadCachedMessages();
 
 		// Clean up code to avoid memory leaks
 		return () => {
 			if (unsubChatMessages) unsubChatMessages();
 		};
-	}, []);
+	}, [isConnected]);
+
+	const cacheChatMessages = async (messagesToCache) => {
+		try {
+			await AsyncStorage.setItem(
+				'localChatMessages',
+				JSON.stringify(messagesToCache)
+			);
+		} catch (error) {
+			console.log(error.message);
+		}
+	};
+
+	const loadCachedMessages = async () => {
+		const cachedChatMessages =
+			(await AsyncStorage.getItem('localChatMessages')) || [];
+		setMessages(JSON.parse(cachedChatMessages));
+	};
 
 	//Writing Data in Firestore Database
 	const onSend = (newMessages) => {
@@ -71,6 +100,11 @@ const Chat = ({ route, navigation, db }) => {
 		);
 	};
 
+	const renderInputToolbar = (props) => {
+		if (isConnected) return <InputToolbar {...props} />;
+		else return null;
+	};
+
 	return (
 		<View
 			style={[styles.container, { backgroundColor: chatBackgroundColor }]}
@@ -78,6 +112,7 @@ const Chat = ({ route, navigation, db }) => {
 			<GiftedChat
 				messages={messages}
 				renderBubble={renderBubble}
+				renderInputToolbar={renderInputToolbar}
 				onSend={(messages) => onSend(messages)}
 				user={{
 					_id: userID,
