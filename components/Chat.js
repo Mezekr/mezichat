@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
+import CustomActions from './CustomActions';
 
 const Chat = ({ route, navigation, db, isConnected }) => {
 	// Name to display on the States bar and
@@ -105,6 +106,10 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 		else return null;
 	};
 
+	const renderCustomActions = (props) => {
+		return <CustomActions {...props} />;
+	};
+
 	return (
 		<View
 			style={[styles.container, { backgroundColor: chatBackgroundColor }]}
@@ -114,6 +119,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 				renderBubble={renderBubble}
 				renderInputToolbar={renderInputToolbar}
 				onSend={(messages) => onSend(messages)}
+				renderActions={renderCustomActions}
 				user={{
 					_id: userID,
 					name: name,
