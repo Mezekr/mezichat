@@ -11,7 +11,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import CustomActions from './CustomActions';
 
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
 	// Name to display on the States bar and
 	// Chat Background Color vuleus from the start sceen
 	const { userID, name, chatBackgroundColor } = route.params;
@@ -107,7 +107,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 	};
 
 	const renderCustomActions = (props) => {
-		return <CustomActions {...props} />;
+		return <CustomActions storage={storage} userID={userID} {...props} />;
 	};
 
 	return (
