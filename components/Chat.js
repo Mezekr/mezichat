@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Audio } from 'expo-av';
 import {
 	addDoc,
 	collection,
@@ -7,7 +8,14 @@ import {
 	query,
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import {
+	KeyboardAvoidingView,
+	Platform,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import MapView from 'react-native-maps';
 import CustomActions from './CustomActions';
@@ -19,6 +27,8 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 
 	// State used to hold the message Send
 	const [messages, setMessages] = useState([]);
+
+	let soundObject = null;
 
 	let unsubChatMessages;
 
@@ -56,6 +66,8 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 		// Clean up code to avoid memory leaks
 		return () => {
 			if (unsubChatMessages) unsubChatMessages();
+			// Unload sound from memory when chat component unmounts
+			if (soundObject) soundObject.unloadAsync();
 		};
 	}, [isConnected]);
 
@@ -135,6 +147,38 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 		return null;
 	};
 
+	// Renders a message bubble that contains a button to play
+	const renderAudioBubble = (props) => {
+		return (
+			<View {...props}>
+				<TouchableOpacity
+					style={{
+						backgroundColor: '#FF0',
+						borderRadius: 10,
+						margin: 5,
+					}}
+					onPress={async () => {
+						const { sound } = await Audio.Sound.createAsync({
+							uri: props.currentMessage.audio,
+						});
+						soundObject = sound;
+						await sound.playAsync();
+					}}
+				>
+					<Text
+						style={{
+							textAlign: 'center',
+							color: 'black',
+							padding: 5,
+						}}
+					>
+						Play Sound
+					</Text>
+				</TouchableOpacity>
+			</View>
+		);
+	};
+
 	return (
 		<View
 			style={[styles.container, { backgroundColor: chatBackgroundColor }]}
@@ -146,6 +190,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 				onSend={(messages) => onSend(messages)}
 				renderActions={renderCustomActions}
 				renderCustomView={renderCustomView}
+				renderMessageAudio={renderAudioBubble}
 				user={{
 					_id: userID,
 					name: name,
