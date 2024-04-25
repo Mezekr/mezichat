@@ -1,3 +1,11 @@
+import {
+	API_KEY,
+	APP_ID,
+	AUTH_DOMAIN,
+	MESSAGING_SENDER_ID,
+	PROJECT_ID,
+	STORAGE_BUCKET,
+} from '@env';
 import NetInfo from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,19 +16,11 @@ import {
 	enableNetwork,
 	getFirestore,
 } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import { useEffect } from 'react';
 import { Alert, LogBox, StyleSheet, Text, View } from 'react-native';
 import Chat from './components/Chat';
 import Start from './components/Start';
-
-import {
-	API_KEY,
-	APP_ID,
-	AUTH_DOMAIN,
-	MESSAGING_SENDER_ID,
-	PROJECT_ID,
-	STORAGE_BUCKET,
-} from '@env';
 
 LogBox.ignoreAllLogs();
 LogBox.ignoreLogs(['AsyncStorage has been extracted from']);
@@ -57,6 +57,8 @@ const App = () => {
 
 	// Initialize Cloud Firestore and get a reference to the service
 	const db = getFirestore(app);
+	//initialize the storage handler to store Images in Cloud Firestore
+	const storage = getStorage(app);
 
 	return (
 		<NavigationContainer>
@@ -72,6 +74,7 @@ const App = () => {
 							db={db}
 							// Pass connection status to chat component
 							isConnected={connectionStatus.isConnected}
+							storage={storage}
 							{...props}
 						/>
 					)}
