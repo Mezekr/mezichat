@@ -8,9 +8,9 @@ const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
 
 	const onActionPress = () => {
 		const options = [
-			'Choose Image From Library',
-			'Take Picture',
-			'Send Location',
+			'Select an image from library',
+			'Take a photo',
+			'Share location',
 			'Cancel',
 		];
 		const cancelButtonIndex = options.length - 1;
