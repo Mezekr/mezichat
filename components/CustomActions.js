@@ -1,13 +1,44 @@
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
-	const onActionPress = () => {};
+	// fetchs Gifted Chat's ActionSheet so that you can add these options to it
+	const actionSheet = useActionSheet();
+
+	const onActionPress = () => {
+		const options = [
+			'Choose Image From Library',
+			'Take Picture',
+			'Send Location',
+			'Cancel',
+		];
+		const cancelButtonIndex = options.length - 1;
+		actionSheet.showActionSheetWithOptions(
+			{
+				options,
+				cancelButtonIndex,
+			},
+			async (buttonIndex) => {
+				switch (buttonIndex) {
+					case 0:
+						pickImage();
+						return;
+					case 1:
+						takePhoto();
+						return;
+					case 2:
+						getLocation();
+					default:
+				}
+			}
+		);
+	};
 
 	return (
 		<TouchableOpacity style={styles.container} onPress={onActionPress}>
 			<View style={[styles.wrapper, wrapperStyle]}>
-				<Text style={[styles.iconText, iconTextStyle]}>+</Text>
+				<Text style={[styles.iconText, iconTextStyle]}> + </Text>
 			</View>
 		</TouchableOpacity>
 	);
@@ -27,11 +58,12 @@ const styles = StyleSheet.create({
 		borderColor: '#b2b2b2',
 		borderWidth: 2,
 		flex: 1,
+		alignItems: 'center',
 	},
 	iconText: {
-		color: '#b2b2b2',
+		color: '#515A6E',
 		fontWeight: 'bold',
-		fontSize: 10,
+		fontSize: 16,
 		backgroundColor: 'transparent',
 		textAlign: 'center',
 	},
