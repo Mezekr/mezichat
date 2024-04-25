@@ -1,5 +1,6 @@
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
+import * as MediaLibrary from 'expo-media-library';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -57,9 +58,13 @@ const CustomActions = ({
 		let permissions = await ImagePicker.requestCameraPermissionsAsync();
 		if (permissions?.granted) {
 			let result = await ImagePicker.launchCameraAsync();
-			if (!result.canceled)
+			if (!result.canceled) {
 				await uploadAndSendImage(result.assets[0].uri);
-			else Alert.alert("Permissions haven't been granted.");
+				let mediaLibraryPermissions =
+					await MediaLibrary.requestPermissionsAsync();
+				if (mediaLibraryPermissions?.granted)
+					await MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
+			} else Alert.alert("Permissions haven't been granted.");
 		}
 	};
 
