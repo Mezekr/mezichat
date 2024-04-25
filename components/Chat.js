@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
+import MapView from 'react-native-maps';
 import CustomActions from './CustomActions';
 
 const Chat = ({ route, navigation, db, isConnected, storage }) => {
@@ -110,6 +111,30 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 		return <CustomActions storage={storage} userID={userID} {...props} />;
 	};
 
+	// Renders Geolaction data
+	const renderCustomView = (props) => {
+		const { currentMessage } = props;
+		if (currentMessage.location) {
+			return (
+				<MapView
+					style={{
+						width: 150,
+						height: 100,
+						borderRadius: 13,
+						margin: 3,
+					}}
+					region={{
+						latitude: currentMessage.location.latitude,
+						longitude: currentMessage.location.longitude,
+						latitudeDelta: 0.0922,
+						longitudeDelta: 0.0421,
+					}}
+				/>
+			);
+		}
+		return null;
+	};
+
 	return (
 		<View
 			style={[styles.container, { backgroundColor: chatBackgroundColor }]}
@@ -120,6 +145,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 				renderInputToolbar={renderInputToolbar}
 				onSend={(messages) => onSend(messages)}
 				renderActions={renderCustomActions}
+				renderCustomView={renderCustomView}
 				user={{
 					_id: userID,
 					name: name,
