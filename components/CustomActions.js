@@ -29,10 +29,10 @@ const CustomActions = ({
 
 	const onActionPress = () => {
 		const options = [
-			'Select an image from library',
-			'Take a photo',
-			'Share location',
-			'Record a Sound',
+			'Choose From Library',
+			'Take Picture',
+			'Send Location',
+			'Record Audio',
 			'Cancel',
 		];
 		const cancelButtonIndex = options.length - 1;
@@ -51,6 +51,7 @@ const CustomActions = ({
 						return;
 					case 2:
 						getLocation();
+						return;
 					case 3:
 						startRecording();
 						return;
