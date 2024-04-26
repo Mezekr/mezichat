@@ -57,3 +57,6 @@ A mobile chat application that will provide users with a chat interface and imag
 -   Setting up an iOS Simulator with use Xcode
 
 ## App User Interface
+
+https://github.com/Mezekr/mezichat/assets/66778493/5aa302d8-1045-4c80-99de-b7dd834fe0d5
+
