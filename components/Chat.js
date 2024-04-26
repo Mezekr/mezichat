@@ -1,3 +1,4 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from 'expo-av';
 import {
@@ -115,7 +116,17 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 	};
 
 	const renderInputToolbar = (props) => {
-		if (isConnected) return <InputToolbar {...props} />;
+		if (isConnected)
+			return (
+				<InputToolbar {...props}>
+					<Ionicons
+						name="send-sharp"
+						size={36}
+						color="#00C418"
+						style={{ padding: 5 }}
+					></Ionicons>
+				</InputToolbar>
+			);
 		else return null;
 	};
 
@@ -133,7 +144,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 						width: 150,
 						height: 100,
 						borderRadius: 13,
-						margin: 3,
+						margin: 5,
 					}}
 					region={{
 						latitude: currentMessage.location.latitude,
@@ -153,7 +164,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 			<View {...props}>
 				<TouchableOpacity
 					style={{
-						backgroundColor: '#FF0',
+						backgroundColor: '#f2f5e5',
 						borderRadius: 10,
 						margin: 5,
 					}}
@@ -165,15 +176,15 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 						await sound.playAsync();
 					}}
 				>
-					<Text
+					<Ionicons
+						name="play-circle-sharp"
+						size={48}
 						style={{
 							textAlign: 'center',
 							color: 'black',
 							padding: 5,
 						}}
-					>
-						Play Sound
-					</Text>
+					></Ionicons>
 				</TouchableOpacity>
 			</View>
 		);
